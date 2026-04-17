@@ -19,6 +19,7 @@ Forward mode autodiff only
 * $R_\mathrm{C}(x, y)$
 * $R_\mathrm{J}(x, y, z, p)$
 * $R_\mathrm{D}(x, y, z)$
+* $R_\mathrm{G}(x, y, z)$
 
 ## Legendre forms 
 
