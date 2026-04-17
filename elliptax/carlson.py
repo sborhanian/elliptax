@@ -285,3 +285,25 @@ def rd(x, y, z):
         - 9 * E2 * E3 / 52 
         + 3 * E5 / 26
     ) * s['An']**-1.5 + 3 * s['t']
+
+@jax.jit
+@jnp.vectorize
+def rg(x, y, z):
+    r"""JAX implementation of Carlson's :math:`R_\mathrm{G}`
+
+    Computed using the algorithm in Carlson, 1994: https://arxiv.org/pdf/math/9409227.pdf
+
+     Args:
+       x: arraylike, real valued.
+       y: arraylike, real valued.
+       z: arraylike, real valued.
+
+     Returns:
+       The value of the integral :math:`R_\mathrm{G}`
+
+     Notes:
+       ``rg`` does not support complex-valued inputs.
+       ``rg`` requires `jax.config.update("jax_enable_x64", True)`
+    """
+
+    return (z * rf(x, y, z) - (x - z) * (y - z) * rd(x, y, z) / 3. + jnp.sqrt(x * y / z)) / 2.
