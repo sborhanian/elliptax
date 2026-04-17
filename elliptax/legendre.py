@@ -1,6 +1,6 @@
 import jax
 import jax.numpy as jnp
-from carlson import *
+from .carlson import *
 
 @jax.jit
 @jnp.vectorize
