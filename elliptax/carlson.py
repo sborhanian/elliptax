@@ -191,8 +191,8 @@ def rj_posp(x, y, z, p):
 
         s['An'] = 0.25 * (s['An'] + lam)
         d = jnp.prod(jnp.sqrt(xyzp[3]) + jnp.sqrt(xyzp[:-1]))
-        e = s['f'] ** 3 * delta / d**2
-        s['t'] = s['t'] + s['f'] * rc(1, 1 + e) / d
+        e = s['f'] ** 3. * delta / d**2
+        s['t'] = s['t'] + s['f'] * rc(1., 1. + e) / d
         s['xyzp'] = 0.25 * (xyzp + lam)
         s['f'] = s['f'] * 0.25
 
