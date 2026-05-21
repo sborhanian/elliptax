@@ -1,7 +1,7 @@
 import jax
 import jax.numpy as jnp
 
-from elliptax.carlson import *
+from .carlson import rf, rd, rj
 
 @jax.jit
 @jnp.vectorize

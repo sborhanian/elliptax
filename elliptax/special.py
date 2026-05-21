@@ -1,8 +1,10 @@
 import jax
 import jax.numpy as jnp
 
-import elliptax.carlson as carlson
-import elliptax.jacobi as jacobi
+from . import carlson
+from .jacobi import ellipj as _ellipj
+
+jax.config.update("jax_enable_x64", True)
 
 @jax.jit
 @jnp.vectorize
@@ -25,8 +27,7 @@ def ellipk(m):
        ``ellipk`` requires `jax.config.update("jax_enable_x64", True)`
     """
 
-    kc2 = 1 - m
-    return carlson.rf(0.0, kc2, 1.0)
+    return carlson.rf(0.0, 1 - m, 1.0)
 
 @jax.jit
 @jnp.vectorize
@@ -49,8 +50,7 @@ def ellipe(m):
        ``ellipe`` requires `jax.config.update("jax_enable_x64", True)`
     """
 
-    kc2 = 1 - m
-    return kc2 * (carlson.rd(0.0, kc2, 1.0) + carlson.rd(0.0, 1.0, kc2)) / 3.0
+    return (1 - m) * (carlson.rd(0.0, 1 - m, 1.0) + carlson.rd(0.0, 1.0, 1 - m)) / 3.0
 
 @jax.jit
 @jnp.vectorize
@@ -74,8 +74,7 @@ def ellippi(n, m):
        ``ellippi`` requires `jax.config.update("jax_enable_x64", True)`
     """
 
-    kc2 = 1 - m
-    return n * carlson.rj(0.0, kc2, 1.0, 1 - n) / 3.0 + ellipk(m)
+    return n * carlson.rj(0.0, 1 - m, 1.0, 1 - n) / 3.0 + ellipk(m)
 
 @jax.jit
 @jnp.vectorize
@@ -156,22 +155,22 @@ def ellippiinc(phi, m, n):
 
 @jax.jit
 @jnp.vectorize
-def ellipk_complement(k):
+def ellipk_complement(m):
 
     r"""JAX implementation of the complemenary complete elliptic integral of the first kind 
 
      Args:
-       k: arraylike, real valued, with abs(k) <= 1.
+       m: arraylike, real valued, with abs(m) <= 1.
 
      Returns:
-       The value of the complemenary complete elliptic integral of the first kind, :math:`K'(k)`
+       The value of the complemenary complete elliptic integral of the first kind, :math:`K'(m)`
 
      Notes:
        ``ellipk_complement`` does not support complex-valued inputs.
        ``ellipk_complement`` requires `jax.config.update("jax_enable_x64", True)`
     """
 
-    return ellipk(jnp.sqrt(1 - jnp.abs(k)))
+    return ellipk(jnp.sqrt(1 - jnp.abs(m)))
 
 @jax.jit
 @jnp.vectorize
@@ -292,3 +291,30 @@ def elliprg(x, y, z):
     """
 
     return carlson.rg(x, y, z)
+
+
+def ellipj(u, m):
+    """Jacobi elliptic functions, scipy-compatible interface.
+
+    Wraps :func:`elliptax.ellipj` and appends the Jacobi amplitude
+    ``ph = am(u|m) = arcsin(sn(u|m))``, matching the four-element return
+    of :func:`scipy.special.ellipj`.
+
+    Parameters
+    ----------
+    u : scalar or array_like
+        Real argument.
+    m : scalar or array_like
+        Parameter (0 < m < 1); m = k². Shapes must broadcast with `u`.
+
+    Returns
+    -------
+    sn, cn, dn, ph : tuple of jnp.ndarray
+        Jacobi elliptic functions and the amplitude, with the broadcast
+        shape of (u, m).
+    """
+
+    sn, cn, dn = _ellipj(u, m)
+    ph = jnp.arcsin(sn)
+
+    return sn, cn, dn, ph

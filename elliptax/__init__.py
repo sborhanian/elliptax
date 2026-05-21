@@ -1,11 +1,22 @@
-from .carlson import rf, rc, rj, rd, rg
-from .bulirsch import el1, el2, el3, cel
-from .jacobi import ellipj, theta_1, theta_2, theta_3, theta_4, modulus_k, nome_q
-from .legendre import ellipk, ellipe, ellippi, ellipfinc, ellipeinc, ellippiinc
+# Carlson symmetric-form integrals
+from .carlson import rf, rc, rd, rj, rg
 
-__all__ = [
-    "rf", "rc", "rj", "rd", "rg",
-    "el1", "el2", "el3", "cel",
-    "ellipj", "theta_1", "theta_2", "theta_3", "theta_4", "modulus_k", "nome_q",
-    "ellipk", "ellipe", "ellippi", "ellipfinc", "ellipeinc", "ellippiinc",
-]
+# Bulirsch complete and incomplete integrals
+from .bulirsch import el1, el2, el3, cel
+
+# Jacobi theta functions and elliptic functions
+from .jacobi import jacobi_theta, jacobi_theta_error, ellipj
+
+# Legendre-form integrals
+from .legendre import (
+    ellipk,
+    ellipe,
+    ellippi,
+    ellipfinc,
+    ellipeinc,
+    ellippiinc,
+    ellipk_complement,
+)
+
+# scipy-style interface (elliprf, elliprc, …) lives under elliptax.special
+from . import special

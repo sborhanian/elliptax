@@ -1,9 +1,9 @@
 # algorithms from Carlson 1994 (https://arxiv.org/pdf/math/9409227.pdf)
 
 import jax
-from jax import numpy as jnp
-from jax import config
-config.update("jax_enable_x64", True)
+import jax.numpy as jnp
+
+jax.config.update("jax_enable_x64", True)
 
 # relative error will be "less in magnitude than r" 
 r = 1.0e-15
