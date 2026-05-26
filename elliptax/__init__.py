@@ -15,7 +15,6 @@ from .legendre import (
     ellipfinc,
     ellipeinc,
     ellippiinc,
-    ellipk_complement,
 )
 
 # scipy-style interface (elliprf, elliprc, …) lives under elliptax.special

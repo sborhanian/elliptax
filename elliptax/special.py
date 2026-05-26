@@ -155,25 +155,6 @@ def ellippiinc(phi, m, n):
 
 @jax.jit
 @jnp.vectorize
-def ellipk_complement(m):
-
-    r"""JAX implementation of the complemenary complete elliptic integral of the first kind 
-
-     Args:
-       m: arraylike, real valued, with abs(m) <= 1.
-
-     Returns:
-       The value of the complemenary complete elliptic integral of the first kind, :math:`K'(m)`
-
-     Notes:
-       ``ellipk_complement`` does not support complex-valued inputs.
-       ``ellipk_complement`` requires `jax.config.update("jax_enable_x64", True)`
-    """
-
-    return ellipk(jnp.sqrt(1 - jnp.abs(m)))
-
-@jax.jit
-@jnp.vectorize
 def elliprf(x, y, z):
     r"""JAX implementation of the Carlson symmetric elliptic integral of the first kind 
 
