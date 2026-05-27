@@ -2,7 +2,7 @@ import jax
 import jax.numpy as jnp
 
 from . import carlson
-from .jacobi import ellipj as _ellipj
+from . import jacobi
 
 jax.config.update("jax_enable_x64", True)
 
@@ -277,7 +277,7 @@ def elliprg(x, y, z):
 def ellipj(u, m):
     """Jacobi elliptic functions, scipy-compatible interface.
 
-    Wraps :func:`elliptax.ellipj` and appends the Jacobi amplitude
+    Wraps :func:`elliptax.jacobi_ellip` and appends the Jacobi amplitude
     ``ph = am(u|m) = arcsin(sn(u|m))``, matching the four-element return
     of :func:`scipy.special.ellipj`.
 
@@ -295,7 +295,7 @@ def ellipj(u, m):
         shape of (u, m).
     """
 
-    sn, cn, dn = _ellipj(u, m)
+    sn, cn, dn = jacobi.jacobi_ellip(u, m)
     ph = jnp.arcsin(sn)
 
     return sn, cn, dn, ph

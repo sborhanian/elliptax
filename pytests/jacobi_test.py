@@ -30,7 +30,7 @@ if mp is None:
 
 import scipy.special as ssp
 
-from elliptax import jacobi_theta, ellipj
+from elliptax import jacobi_theta, jacobi_ellip
 
 jax.config.update("jax_enable_x64", True)
 
@@ -106,7 +106,7 @@ def _mpmath_ellipj_check(fn_idx, key_seed, N=10_000):
     """
     fns = ("sn", "cn", "dn")
     u, m = _ellipj_args(key_seed, N)
-    ours = np.asarray(ellipj(u, m)[fn_idx])
+    ours = np.asarray(jacobi_ellip(u, m)[fn_idx])
     with mp.workdps(30):
         ref = np.array([complex(mp.ellipfun(fns[fn_idx], ui, mi)).real
                         for ui, mi in zip(u, m)])
@@ -179,7 +179,7 @@ def test_dn_vs_mpmath():
 def test_sn_vs_scipy():
     """sn(u|m) − scipy.ellipj(u, m)[0] = 0 over N random (u, m)."""
     _scipy_consistency_check(
-        lambda u, m: np.asarray(ellipj(u, m)[0]) - ssp.ellipj(u, m)[0],
+        lambda u, m: np.asarray(jacobi_ellip(u, m)[0]) - ssp.ellipj(u, m)[0],
         key_seed=7,
     )
 
@@ -187,7 +187,7 @@ def test_sn_vs_scipy():
 def test_cn_vs_scipy():
     """cn(u|m) − scipy.ellipj(u, m)[1] = 0 over N random (u, m)."""
     _scipy_consistency_check(
-        lambda u, m: np.asarray(ellipj(u, m)[1]) - ssp.ellipj(u, m)[1],
+        lambda u, m: np.asarray(jacobi_ellip(u, m)[1]) - ssp.ellipj(u, m)[1],
         key_seed=8,
     )
 
@@ -195,6 +195,6 @@ def test_cn_vs_scipy():
 def test_dn_vs_scipy():
     """dn(u|m) − scipy.ellipj(u, m)[2] = 0 over N random (u, m)."""
     _scipy_consistency_check(
-        lambda u, m: np.asarray(ellipj(u, m)[2]) - ssp.ellipj(u, m)[2],
+        lambda u, m: np.asarray(jacobi_ellip(u, m)[2]) - ssp.ellipj(u, m)[2],
         key_seed=9,
     )

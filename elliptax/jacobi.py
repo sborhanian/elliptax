@@ -211,7 +211,7 @@ def jacobi_theta(z, tau, tol=1e-18, return_error_bound=False):
     return thetas
 
 
-def ellipj(u, m):
+def jacobi_ellip(u, m):
     """
     Compute Jacobi elliptic functions (sn, cn, dn) via theta functions.
 
