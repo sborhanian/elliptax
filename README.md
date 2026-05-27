@@ -9,7 +9,7 @@ Clone the repository and install from source:
 ```bash
 git clone https://github.com/your-username/elliptax.git
 cd elliptax
-pip install -e .
+pip install .
 ```
 
 This will also install all dependencies, including JAX. `float64` support must be enabled before use:
