@@ -5,7 +5,7 @@ from .carlson import rf, rc, rd, rj, rg
 from .bulirsch import el1, el2, el3, cel
 
 # Jacobi theta functions and elliptic functions
-from .jacobi import jacobi_theta, jacobi_theta_error, jacobi_ellip
+from .jacobi import select_series_length, jacobi_theta, jacobi_theta_error, jacobi_ellip
 
 # Legendre-form integrals
 from .legendre import (

@@ -2,6 +2,18 @@
 
 All notable changes to elliptax are documented here.
 
+## [0.1.2] — 2026-05-29
+
+### Added
+- `select_series_length`: public function that performs the host-device sync needed to choose the theta-series length N. Calling it once ahead of time and passing the result as `N` to `jacobi_theta` or `jacobi_ellip` makes those calls sync-free and JIT-compilable, which is the recommended pattern on GPU/TPU.
+- `jacobi_theta` and `jacobi_ellip` now accept an optional `N` argument to skip the automatic series-length selection entirely.
+- README section "GPU/TPU usage" under Jacobi functions documenting the `select_series_length` workflow with examples.
+
+### Changed
+- Internal helper `_ellip_to_theta_args(u, m)` extracted to centralise the $(u, m) \to (z, \tau)$ conversion used by both `jacobi_ellip` and `select_series_length`.
+
+---
+
 ## [0.1.1] — 2026-05-27
 
 ### Changed

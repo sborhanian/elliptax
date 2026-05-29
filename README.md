@@ -72,6 +72,36 @@ A scipy-compatible interface is also available under `elliptax.special` (see bel
 
 The series length for `jacobi_theta` is selected automatically to meet a target tolerance (default $\approx 10^{-18}$). An error bound can be returned alongside the values with `return_error_bound=True`.
 
+| Function | Description |
+|---|---|
+| `select_series_length(u=u, m=m)` or `select_series_length(z=z, tau=tau)` | Choose the series length N for a given input range |
+
+#### GPU/TPU usage
+
+By default, `jacobi_theta` and `jacobi_ellip` perform a host-device sync on every call to select the theta series length. On GPU or TPU this stall can be avoided by calling `select_series_length` once ahead of time and passing the result as `N`:
+
+```python
+import jax
+from elliptax import jacobi_theta, jacobi_ellip, select_series_length
+
+# compute N once on CPU (the only sync)
+N = select_series_length(u=u, m=m)
+
+# subsequent calls are sync-free and JIT-compilable
+jit_ellip = jax.jit(lambda u, m: jacobi_ellip(u, m, N=N))
+sn, cn, dn = jit_ellip(u, m)
+```
+
+The same pattern works for `jacobi_theta`:
+
+```python
+N = select_series_length(z=z, tau=tau)
+jit_theta = jax.jit(lambda z, tau: jacobi_theta(z, tau, N=N))
+th1, th2, th3, th4 = jit_theta(z, tau)
+```
+
+`N` is conservative for the worst-case input in the batch, so it is safe to reuse across calls as long as `|q| = \exp(-\pi \, \mathrm{Im}(\tau))` and `|w| = \exp(|\mathrm{Im}(z)|)` stay within the range used to compute it.
+
 ### Interface for scipy.special compatibility (`elliptax.special`)
 
 This module wraps the functions of interest above to match the `scipy.special` interface, which uses the parameter $m = k^2$ instead of the modulus $k$ for the Legendre-form functions.
