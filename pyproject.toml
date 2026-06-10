@@ -5,11 +5,26 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "elliptax"
 version = "0.1.2"
-description = "JAX implementations of elliptic integrals"
+description = "JAX implementations of elliptic integrals and special functions"
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
 requires-python = ">=3.9"
 dependencies = ["jax"]
+authors = [
+    { name = "Tyler Gordon" },
+    { name = "Ssohrab Borhanian" },
+]
+keywords = ["jax", "elliptic integrals", "elliptic functions"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Intended Audience :: Science/Research",
+]
+
+[project.urls]
+Homepage = "https://github.com/sborhanian/elliptax"
+Repository = "https://github.com/sborhanian/elliptax"
 
 [tool.setuptools.packages.find]
 where = ["."]

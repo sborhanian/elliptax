@@ -2,6 +2,12 @@
 
 All notable changes to elliptax are documented here.
 
+## [0.1.2] — 2026-06-10
+
+### Changed
+- expanded `pyproject.toml` fields
+- fixed typo in the link to the project repository in `README.md`
+
 ## [0.1.2] — 2026-05-29
 
 ### Added

@@ -7,7 +7,7 @@
 Clone the repository and install from source:
 
 ```bash
-git clone https://github.com/your-username/elliptax.git
+git clone https://github.com/sborhanian/elliptax.git
 cd elliptax
 pip install .
 ```
