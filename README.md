@@ -78,7 +78,11 @@ The series length for `jacobi_theta` is selected automatically to meet a target 
 
 #### GPU/TPU usage
 
-By default, `jacobi_theta` and `jacobi_ellip` perform a host-device sync on every call to select the theta series length. On GPU or TPU this stall can be avoided by calling `select_series_length` once ahead of time and passing the result as `N`:
+`jacobi_theta` and `jacobi_ellip` are JIT-compilable as they are: under `jax.jit` (or `vmap`/`grad`), where the inputs cannot be inspected, a conservative static series length `N = 10` is used — after argument reduction its truncation bound is ~4e-36, and terms beyond the minimal length underflow to exact zeros.
+
+Both functions reduce their arguments toward the fundamental domain with exact modular and quasi-periodicity identities before summing the series, so the full range $0 < \mathrm{Im}(\tau)$ is handled accurately, including $|q| = e^{-\pi \, \mathrm{Im}(\tau)} \to 1$ (e.g. $m \to 1$ in `jacobi_ellip`). Precision decays gently as $|q| \to 1$ (roughly $\varepsilon \, |z|^2/\mathrm{Im}(\tau)$, about `1e-11` relative at $\mathrm{Im}(\tau) = 0.001$); τ clustered near rationals of continued-fraction depth > 4 may not reduce fully.
+
+Outside `jit`, both functions perform a host-device sync on every call to select the minimal series length adaptively. To avoid the stall in eager mode, call `select_series_length` once ahead of time and pass the result as `N`:
 
 ```python
 import jax

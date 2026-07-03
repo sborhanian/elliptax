@@ -2,6 +2,38 @@
 
 All notable changes to elliptax are documented here.
 
+## [0.1.3] — 2026-07-03
+
+### Added
+- Automatic argument reduction for `jacobi_theta`/`jacobi_ellip` (`_reduce_theta_args`): τ is moved toward the fundamental domain via the modular identities (DLMF 20.7.28, 20.7.30–33) and z is shifted by quasi-periods (DLMF 20.2.6–9) before the series is summed. This removes the |q| ≲ 0.9 accuracy wall: the |q| → 1 regime (small Im τ, e.g. m → 1 in `jacobi_ellip`) now evaluates with only a handful of series terms. Relative error grows gently with the reduction prefactor's exponent (~ε·|z|²/Im τ, about 1e-11 at Im τ = 0.001); τ near rationals of continued-fraction depth > 4 may not reduce fully.
+- The reduction prefactor is tracked in log space (plus an exact ±1 sign), and `jacobi_ellip` consumes theta *ratios* whose log-magnitudes cancel exactly — sn/cn/dn stay finite and accurate (≤1e-13 abs) for m up to 1 − 1e-12 with u up to 300, where the individual theta values overflow float64.
+- Tests for the |q| → 1 theta regime and extreme-m `jacobi_ellip` in `pytests/jacobi_test.py`.
+
+### Changed
+- `select_series_length` chooses N for the *reduced* arguments (matching what `jacobi_theta` evaluates) and checks its convergence bound per batch element in log space; the returned N is now small (~6–10) even for |q| close to 1.
+- `jacobi_theta_error` evaluates the truncation bound for the reduced arguments and documents the result as a relative bound.
+- Static fallback series length (used under `jit`/`vmap`/`grad` without an explicit `N`) lowered from 64 to 10: after argument reduction Im τ ≥ √3/2 and |Im z| ≤ π·Im τ/2, so the truncation bound 2·exp(−π·Im τ·(E−(N+2)/2)) is ~4e-36 at N = 10; τ that escape the 4-round reduction remain covered down to Im τ ≥ 0.45. Roughly halves the fully-jitted path's runtime at 10k–100k inputs. A conditional retry at larger N was rejected: the bound makes it unreachable for reduced τ, and under `vmap` a `lax.cond` fallback degrades to `select`, always evaluating both tiers.
+
+### Fixed
+- `jacobi_theta` and `jacobi_ellip` are now JIT-compilable without an explicit `N`. When the inputs are tracers (inside `jit`/`vmap`/`grad`) and the adaptive series-length selection cannot concretise τ, a conservative static length `N = 64` is used instead. Terms beyond the minimal length underflow to exact zeros, so accuracy is unchanged for all |q| ≤ 0.90 (Im τ ≥ 0.033) with |Im z| ≤ 1; outside that domain pass `N` explicitly (via `select_series_length`) or check `jacobi_theta_error`.
+- Theta-series terms are computed as single exponentials `exp(iπτ·ms ± 2inz)` instead of the product `w^{±2n} · q^{ms}`, whose factors could overflow/underflow separately and yield `inf · 0 = NaN` for large |Im z| with a large series length.
+
+### Added
+- JIT tests without explicit `N` in `pytests/jacobi_test.py`.
+
+---
+
+## [Unreleased]
+
+### Added
+- `jacobi_ellip` now supports the degenerate endpoints `m = 0` and `m = 1`, returning their exact limiting forms (`m = 0`: sn = sin, cn = cos, dn = 1; `m = 1`: sn = tanh, cn = dn = sech). Mixed batches containing the endpoints alongside interior values are handled in a single call.
+- Endpoint tests for `jacobi_ellip` at `m = 0` and `m = 1` in `pytests/jacobi_test.py`.
+
+### Changed
+- `_ellip_to_theta_args` clamps `m` away from 0 and 1 so `R_F(0, 1−m, 1)` and `R_F(0, m, 1)` stay finite; the exact endpoint values are then selected via `jnp.where`.
+
+---
+
 ## [0.1.2] — 2026-06-10
 
 ### Changed
